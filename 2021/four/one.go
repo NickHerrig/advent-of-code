@@ -8,20 +8,64 @@ import (
 	"strings"
 )
 
-func (b *board) update(ball string) error {
+type board struct {
+	Numbers [][]int
+}
+
+func (b *board) update(ball int) error {
+	for x, row := range b.Numbers {
+		for y, val := range row {
+			if ball == val {
+				b.Numbers[x][y] = 0
+			}
+		}
+	}
+
 	return nil
+}
+func (b *board) check(line []int) bool {
+	var sum int
+	for _, val := range line {
+		sum += val
+	}
+	if sum == 0 {
+		return true
+	}
+
+	return false
 }
 
 func (b *board) bingo() bool {
+	// check rows first...
+	for _, row := range b.Numbers {
+		if b.check(row) {
+			return true
+		}
+	}
+
+	for y := 0; y < 5; y++ {
+		column := []int{}
+		for x, _ := range b.Numbers {
+			column = append(column, b.Numbers[x][y])
+		}
+		if b.check(column) {
+			return true
+		}
+	}
+
 	return false
 }
 
 func (b *board) sum() int {
-	return 1000
-}
 
-type board struct {
-	Numbers [][]string
+	var sum int
+	for _, row := range b.Numbers {
+		for _, val := range row {
+			sum += val
+		}
+	}
+
+	return sum
 }
 
 func main() {
@@ -65,13 +109,10 @@ func main() {
 		for _, board := range boards {
 			board.update(ball)
 			if sum := board.sum(); board.bingo() {
-				fmt.Println("Winner!")
-				b, err := strconv.Atoi(ball)
-				if err != nil {
-					fmt.Println("issue convering ball to int")
-				}
-				answer := sum * b
+				fmt.Println("Found Winner!")
+				answer := sum * ball
 				fmt.Println(answer)
+				os.Exit(0)
 			}
 		}
 
@@ -81,21 +122,35 @@ func main() {
 
 func newBoard(lines []string) *board {
 
-	s := [][]string{}
+	b := [][]int{}
+
 	for _, line := range lines {
 		vals := strings.Split(line, " ")
-		s = append(s, vals)
+		n := []int{}
+		for _, val := range vals {
+			valInt, err := strconv.Atoi(val)
+			if err != nil {
+				continue
+			}
+			n = append(n, valInt)
+		}
+		b = append(b, n)
+
 	}
 
-	return &board{Numbers: s}
+	return &board{Numbers: b}
 
 }
 
-func newCage(numbers []string) chan string {
+func newCage(numbers []string) chan int {
 	buffer := len(numbers)
-	c := make(chan string, buffer)
+	c := make(chan int, buffer)
 	for _, num := range numbers {
-		c <- num
+		b, err := strconv.Atoi(num)
+		if err != nil {
+			fmt.Println("issue convering ball to int")
+		}
+		c <- b
 	}
 
 	return c
