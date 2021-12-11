@@ -40,6 +40,27 @@ func (l *line) FindAllPoints() {
 			l.Points = append(l.Points, point)
 		}
 	default:
+		//	x1 := l.Points[0][0]
+		//	x2 := l.Points[1][0]
+		//	y1 := l.Points[0][1]
+		//	y2 := l.Points[1][1]
+		slope := (y2 - y1) / (x2 - x1)
+		start := []int{}
+		end := []int{}
+
+		if x1 < x2 {
+			start = []int{x1, y1}
+			end = []int{x2, y2}
+		} else {
+			start = []int{x2, y2}
+			end = []int{x1, y1}
+		}
+
+		for x := start[0] + 1; x < end[0]; x++ {
+			start[1] += slope
+			point := []int{x, start[1]}
+			l.Points = append(l.Points, point)
+		}
 
 	}
 
