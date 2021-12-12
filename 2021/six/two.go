@@ -8,23 +8,33 @@ import (
 	"strings"
 )
 
-type school struct {
-	Fish map[int]int
-}
+func Spawn(school []int64) []int64 {
 
-func (s *school) Spawn() {
-	for fish, days := range s.Fish {
-		if days > 0 {
-			s.Fish[fish]--
-		} else {
-			s.Fish[fish] = 6
-			s.Fish[len(s.Fish)+1] = 8
-		}
+	newFish := school[0]
+
+	// decrement fish by one day
+	for i := 0; i < 8; i++ {
+		school[i] = school[i+1]
 	}
+
+	//new fish
+	school[8] = newFish
+
+	//reset fish
+	school[6] += newFish
+
+	return school
 }
 
-func (s *school) Count() int {
-	return len(s.Fish)
+func Count(school []int64) int64 {
+
+	var count int64
+	for _, val := range school {
+		count += val
+	}
+
+	return count
+
 }
 
 func main() {
@@ -43,23 +53,23 @@ func main() {
 	school := newSchool(input)
 
 	for i := 0; i < 256; i++ {
-		school.Spawn()
-		fmt.Println("Day:", i, "Count:", school.Count())
+		school = Spawn(school)
 	}
+	fmt.Println(Count(school))
 
 }
 
-func newSchool(fish []string) *school {
+func newSchool(fish []string) []int64 {
 
-	fishies := map[int]int{}
-	for i, f := range fish {
+	school := make([]int64, 9)
+	for _, f := range fish {
 		fi, err := strconv.Atoi(f)
 		if err != nil {
 			fmt.Println("issue convering fish to int")
 		}
-		fishies[i] = fi
+		school[fi]++
 	}
 
-	return &school{Fish: fishies}
+	return school
 
 }

@@ -24,7 +24,7 @@ func (s *school) Spawn() {
 	}
 }
 
-func (s *school) Count() int64 {
+func (s *school) Count() int {
 	return len(s.Fish)
 }
 
