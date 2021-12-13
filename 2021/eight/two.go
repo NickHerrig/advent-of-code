@@ -4,49 +4,44 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 )
 
-//const (
-//	ONE   = 2
-//	FOUR  = 4
-//	SEVEN = 3
-//	EIGHT = 7
-//)
-
-func generateSegmentMap(signals []string) map[string]string {
-	sm := map[string]string{
-		"abcefg":  "0",
-		"cf":      "1",
-		"acdeg":   "2",
-		"acdfg":   "3",
-		"bcdf":    "4",
-		"abdfg":   "5",
-		"abdefg":  "6",
-		"acf":     "7",
-		"abcdefg": "8",
-		"abcdfg":  "9",
+//subtract string2 from string 1
+func sub(str1, str2 string) string {
+	result := str1
+	for _, letter := range str2 {
+		result = strings.ReplaceAll(result, string(letter), "")
 	}
+	return result
 
-	return sm
 }
 
-func decodeOutput(segmentMap map[string]string, output string) int {
-	decoded := ""
-	nums := strings.Split(output, " ")
-	for _, num := range nums {
-		segmentMap[num] += decoded
+func generateSegmentMap(signals []string) []string {
+	sm := map[string]string{}
+	for _, signal := range signals {
+		switch len(signal) {
+		case 2:
+			sm["1"] = signal
+		case 4:
+			sm["4"] = signal
+		case 3:
+			sm["7"] = signal
+		case 7:
+			sm["8"] = signal
 
+		}
 	}
 
-	fmt.Println(decoded)
-	decodedInt, err := strconv.Atoi(decoded)
-	if err != nil {
-		fmt.Println("Issue parsing string to int")
-	}
+	segments := make([]string, 7)
+	segments[0] = sub(sm["7"], sm["1"])
+	fmt.Println(segments)
 
-	return decodedInt
+	return segments
+}
+
+func decodeOutput(output string) string {
+	return output
 }
 
 func main() {
@@ -68,15 +63,10 @@ func main() {
 		outputs = append(outputs, val[1])
 	}
 
-	//Main Loop for sum of outputs
-	sumOutput := 0
-	for i, signal := range signals {
+	for _, signal := range signals {
 		sliceSignals := strings.Split(signal, " ")
-		segmentMap := generateSegmentMap(sliceSignals)
-		outputDecoded := decodeOutput(segmentMap, outputs[i])
-		sumOutput += outputDecoded
+		segmentSlice := generateSegmentMap(sliceSignals)
+		fmt.Println(segmentSlice)
 	}
-
-	fmt.Println(sumOutput)
 
 }
