@@ -13,28 +13,38 @@ type heightMap struct {
 	Height int
 	Width  int
 	Grid   [][]int
-	Lows   []int
+	Risk   int
 }
 
-func (hm *heightMap) GetAdjacent(x, y int) ([]int, error) {
-	switch {
-	case x == 0 && y == 0:
-		down, err := hm.GetPoint(0, 1)
-		right, err := hm.GetPoint(1, 0)
-		if err != nil {
-			return nil, err
-		}
-		return []int{down, right}, nil
+func (hm *heightMap) GetAdjacent(x, y int) []int {
+
+	points := []int{}
+	up, err := hm.GetPoint(x, y-1)
+	if err == nil {
+		points = append(points, up)
 	}
 
-	err := errors.New("Counln't get adjacent points")
-	return nil, err
+	down, err := hm.GetPoint(x, y+1)
+	if err == nil {
+		points = append(points, down)
+	}
 
+	right, err := hm.GetPoint(x+1, y)
+	if err == nil {
+		points = append(points, right)
+	}
+
+	left, err := hm.GetPoint(x-1, y)
+	if err == nil {
+		points = append(points, left)
+	}
+
+	return points
 }
 
 func (hm *heightMap) GetPoint(x, y int) (int, error) {
 
-	if x < hm.Width && y < hm.Height {
+	if x < hm.Width && x >= 0 && y < hm.Height && y >= 0 {
 		return hm.Grid[y][x], nil
 	} else {
 		err := errors.New("Point not on height map")
@@ -66,12 +76,26 @@ func main() {
 	}
 
 	hm := newHeightMap(outputs)
-	pts, err := hm.GetAdjacent(0, 0)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(pts)
+	for y, row := range outputs {
+		for x, val := range row {
+			adj := hm.GetAdjacent(x, y)
+			low := checkLow(val, adj)
+			if low {
+				hm.Risk += val + 1
+			}
 
+		}
+	}
+	fmt.Println(hm.Risk)
+}
+
+func checkLow(val int, adj []int) bool {
+	for _, a := range adj {
+		if val >= a {
+			return false
+		}
+	}
+	return true
 }
 
 func newHeightMap(grid [][]int) *heightMap {
