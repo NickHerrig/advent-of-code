@@ -19,7 +19,19 @@ def main():
         common_chars = set(first_half) & set(second_half)
         total += priority_dict[common_chars.pop()]
 
+    groups = []
+    for i in range(0, len(rucksacks), 3):
+        group = (rucksacks[i], rucksacks[i+1], rucksacks[i+2])
+        groups.append(group)
+    
+    badge_total = 0
+    for group in groups:
+        common_badge = set(group[0]) & set(group[1]) & set(group[2])
+        badge_total += priority_dict[common_badge.pop()]
+
     print(total)
+    print(badge_total)
+    
 
 
 if __name__=="__main__":
