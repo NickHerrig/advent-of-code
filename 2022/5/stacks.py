@@ -1,3 +1,5 @@
+from collections import deque
+
 def parse_data(data):
 
     for index, line in enumerate(data):
@@ -24,6 +26,25 @@ def parse_data(data):
 
     return parsed_stacks, parsed_moves
 
+def problem_one(stacks, moves):
+
+    for move in moves:
+        crates_to_move, source, destination = move
+        for crate in range(crates_to_move):
+            stacks[destination-1].insert(0,stacks[source-1].pop(0))
+
+    return "".join([stack.pop(0) for stack in stacks])
+
+
+def problem_two(stacks, moves):
+    for move in moves:
+        num_crates_to_move, source, destination = move
+        crates_to_move = stacks[source-1][:num_crates_to_move]
+        stacks[source-1] = stacks[source-1][num_crates_to_move:]
+        stacks[destination-1] = crates_to_move + stacks[destination-1]
+
+    return "".join([stack.pop(0) for stack in stacks])
+
 
 def main():
 
@@ -32,17 +53,12 @@ def main():
         file = f.readlines()
 
     stacks, moves = parse_data(file)
+    print(problem_one(stacks, moves))
 
-    for move in moves:
-        crates_to_move, source, destination = move
-        for crate in range(crates_to_move):
-            stacks[destination-1].insert(0,stacks[source-1].pop(0))
+    stacks, moves = parse_data(file)
+    print(problem_two(stacks, moves))
 
-    solution_one = ''
-    for stack in stacks:
-        solution_one += stack.pop(0)
 
-    print(solution_one)
 
 
 if __name__=="__main__":
