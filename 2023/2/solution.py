@@ -31,16 +31,33 @@ def part_one(input):
         else:
             continue
 
-        
-                
-
-            
-
     return solution
 
 
+def max_colors(subsets):
+    colors = {}
+    for subset in subsets:
+        number, color = subset.strip().split(" ")
+        if color not in colors:
+            colors[color] = []
+        colors[color].append(int(number))
+
+    return max(colors["blue"]) * max(colors["red"]) * max(colors["green"])
+
+
 def part_two(input):
-    return "Not Implemented"
+
+    solution = 0
+    for line in input:
+        game_details , subsets = line.split(":")
+        gameID = re.findall(r'\d+', game_details)[0]
+        subsets = subsets.replace(";", ",").split(",")
+
+        power = max_colors(subsets)
+
+        solution += power
+
+    return solution
 
 
 if __name__ == '__main__':
