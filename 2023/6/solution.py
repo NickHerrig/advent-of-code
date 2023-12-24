@@ -18,7 +18,8 @@ def part_one(times, record_dist):
     return solution
 
 def part_two(times, record_dist):
-    return "Not Implemented"
+    solution = calculate_distances(times, record_dist)
+    return solution
 
 if __name__=="__main__":
 
@@ -27,6 +28,6 @@ if __name__=="__main__":
 
     times = lines[0].split()[1:]
     record_dist = lines[1].split()[1:]
-
     print(part_one(times, record_dist))
-    print(part_two(times, record_dist))
+
+    print(part_two("".join(times), "".join(record_dist)))
