@@ -8,7 +8,6 @@ def parse_seeds(seeds):
             yield j
 
 
-
 def part_one(seeds, converstion_maps):
     locations = []
     for seed in seeds:
